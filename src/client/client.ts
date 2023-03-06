@@ -1,5 +1,8 @@
 import * as THREE from 'three'
+import { Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { drawCoord, translateH, rotateH } from './coordinate'
+import createFloor from './floor'
 
 const scene = new THREE.Scene()
 
@@ -11,20 +14,11 @@ const camera = new THREE.PerspectiveCamera(
 )
 camera.position.z = 2
 
+
 const renderer = new THREE.WebGLRenderer()
+const controls = new OrbitControls(camera, renderer.domElement)
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
-
-new OrbitControls(camera, renderer.domElement)
-
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-})
-
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
@@ -36,15 +30,28 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate)
-
-    cube.rotation.x += 0.01
-    cube.rotation.y += 0.01
-
     render()
 }
 
 function render() {
     renderer.render(scene, camera)
 }
+
+let H = new THREE.Matrix4()
+
+drawCoord(scene, H)
+
+let K = H.clone()
+var rotationMatrix = new THREE.Matrix4();
+rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), 0.8);
+K.multiply(rotationMatrix);
+
+var translationMatrix = new THREE.Matrix4();
+translationMatrix.makeTranslation(1, 0, 0);
+K.multiply(translationMatrix);
+
+drawCoord(scene, K)
+
+createFloor(scene)
 
 animate()
