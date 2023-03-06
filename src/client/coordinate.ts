@@ -25,11 +25,3 @@ export function drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
 
 
 }
-
-export function translateH(x: number, y: number, z: number, H: THREE.Matrix4) {
-    return H.clone().makeTranslation(x, y, z).clone()
-}
-
-export function rotateH(rotAxis: THREE.Vector3, theta: number, H: THREE.Matrix4) {
-    return H.clone().makeRotationAxis(rotAxis, theta).clone()
-}
