@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { drawCoord, translateH, rotateH } from './coordinate'
+import { drawCoord } from './coordinate'
 import createFloor from './floor'
 
 const scene = new THREE.Scene()
