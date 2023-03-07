@@ -3,6 +3,7 @@ import { Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { drawCoord } from './coordinate'
 import createFloor from './floor'
+import { GUI } from 'dat.gui'
 
 const scene = new THREE.Scene()
 
@@ -50,7 +51,12 @@ var translationMatrix = new THREE.Matrix4();
 translationMatrix.makeTranslation(1, 0, 0);
 K.multiply(translationMatrix);
 
-drawCoord(scene, K)
+let K_group = drawCoord(scene, K)
+const gui = new GUI()
+const Coord = gui.addFolder('Coordinate')
+
+Coord.add(K_group, 'visible')
+
 
 createFloor(scene)
 
