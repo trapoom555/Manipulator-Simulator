@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { Vector3 } from 'three';
 
 export function drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
     let xAxis = new THREE.Vector3();
@@ -14,14 +13,19 @@ export function drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
     origin.setFromMatrixPosition(H)
 
     // x axis
-    const arrowXHelper = new THREE.ArrowHelper( xAxis, origin, 1, "#ff0000" );
-    scene.add(arrowXHelper)
+    const xAxisObj = new THREE.ArrowHelper( xAxis, origin, 1, "#ff0000" );
     // y axis
-    const arrowYHelper = new THREE.ArrowHelper( yAxis, origin, 1, "#00ff00" );
-    scene.add(arrowYHelper)
+    const yAxisObj = new THREE.ArrowHelper( yAxis, origin, 1, "#00ff00" );
     // z axis
-    const arrowZHelper = new THREE.ArrowHelper( zAxis, origin, 1, "#0000ff" );
-    scene.add(arrowZHelper)
+    const zAxisObj = new THREE.ArrowHelper( zAxis, origin, 1, "#0000ff" );
 
+    const group = new THREE.Group();
+    group.add(xAxisObj);
+    group.add(yAxisObj);
+    group.add(zAxisObj);
+
+    scene.add(group)
+
+    return group
 
 }
