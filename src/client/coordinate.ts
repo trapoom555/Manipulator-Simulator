@@ -27,5 +27,26 @@ export function drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
     scene.add(group)
 
     return group
+}
 
+export function DHtransformation(a: number, alpha: number, d: number, theta: number, H:THREE.Matrix4) {
+    let K = H.clone();
+    // translate X
+    var translationMatrix = new THREE.Matrix4();
+    translationMatrix.makeTranslation(a, 0, 0);
+    K.multiply(translationMatrix);
+    // rotate X
+    var rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeRotationAxis(new THREE.Vector3(1, 0, 0), alpha);
+    K.multiply(rotationMatrix);
+    // translate Z
+    var translationMatrix = new THREE.Matrix4();
+    translationMatrix.makeTranslation(0, 0, d);
+    K.multiply(translationMatrix);
+    // rotate Z
+    var rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), theta);
+    K.multiply(rotationMatrix);
+
+    return K
 }

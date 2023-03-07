@@ -1,11 +1,18 @@
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { drawCoord } from './coordinate'
+import { DHtransformation, drawCoord } from './coordinate'
 import createFloor from './floor'
 import { GUI } from 'dat.gui'
 
+let DHparam = [
+    [0,0,0,0.785],
+    [2,0,0,0.524]
+]
+
 const scene = new THREE.Scene()
+
+// const camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 ); 
 
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -38,24 +45,23 @@ function render() {
     renderer.render(scene, camera)
 }
 
-let H = new THREE.Matrix4()
+const gui = new GUI()
 
+let H = new THREE.Matrix4()
 drawCoord(scene, H)
 
-let K = H.clone()
-var rotationMatrix = new THREE.Matrix4();
-rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), 0.8);
-K.multiply(rotationMatrix);
+let tmp = H;
+for(let i = 0; i < DHparam.length; i++) {
+    let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], tmp)
+    tmp = K;
 
-var translationMatrix = new THREE.Matrix4();
-translationMatrix.makeTranslation(1, 0, 0);
-K.multiply(translationMatrix);
+    let K_group = drawCoord(scene, K)
+    const Coord = gui.addFolder('Coordinate' + i)
 
-let K_group = drawCoord(scene, K)
-const gui = new GUI()
-const Coord = gui.addFolder('Coordinate')
+    Coord.add(K_group, 'visible')
 
-Coord.add(K_group, 'visible')
+}
+
 
 
 createFloor(scene)
