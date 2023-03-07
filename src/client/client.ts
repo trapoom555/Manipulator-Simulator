@@ -4,11 +4,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { DHtransformation, drawCoord } from './coordinate'
 import createFloor from './floor'
 import { GUI } from 'dat.gui'
+import { addManipulatorJoint } from './manipulator_body'
 
 let DHparam = [
     [0,0,0,0.785],
     [2,0,0,0.524]
 ]
+
+let transformations = [];
 
 const scene = new THREE.Scene()
 
@@ -50,10 +53,12 @@ const gui = new GUI()
 let H = new THREE.Matrix4()
 drawCoord(scene, H)
 
+// transformations.push(H)
 let tmp = H;
 for(let i = 0; i < DHparam.length; i++) {
     let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], tmp)
     tmp = K;
+    transformations.push(K)
 
     let K_group = drawCoord(scene, K)
     const Coord = gui.addFolder('Coordinate' + i)
@@ -62,7 +67,7 @@ for(let i = 0; i < DHparam.length; i++) {
 
 }
 
-
+addManipulatorJoint(transformations, scene)
 
 createFloor(scene)
 
