@@ -29,7 +29,7 @@ export function drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
     return group
 }
 
-export function DHtransformation(a: number, alpha: number, d: number, theta: number, H:THREE.Matrix4) {
+export function DHtransformation(a: number, alpha: number, d: number, theta: number, rho: boolean, q: number, H:THREE.Matrix4) {
     let K = H.clone();
     // translate X
     var translationMatrix = new THREE.Matrix4();
@@ -47,6 +47,20 @@ export function DHtransformation(a: number, alpha: number, d: number, theta: num
     var rotationMatrix = new THREE.Matrix4();
     rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), theta);
     K.multiply(rotationMatrix);
+
+    // joint config
+    if(rho == true) {
+        // revolute joint
+        var rotationMatrix = new THREE.Matrix4();
+        rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), q);
+        K.multiply(rotationMatrix);
+    }
+    else {
+        // prismatic joint
+        var translationMatrix = new THREE.Matrix4();
+        translationMatrix.makeTranslation(0, 0, q);
+        K.multiply(translationMatrix);
+    }
 
     return K
 }

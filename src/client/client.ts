@@ -7,11 +7,12 @@ import { GUI } from 'dat.gui'
 import { addManipulatorJoint } from './manipulator_body'
 
 let DHparam = [
-    [0,0,0,0.785],
-    [2,0,0,0.524]
+    [0, Math.PI/2, 0, 0.785],
+    [2, 0, 0, 0.524]
 ]
 
-let transformations = [];
+let params = { q: [0, 0] }
+let rho = [true, true]
 
 const scene = new THREE.Scene()
 
@@ -50,25 +51,39 @@ function render() {
 
 const gui = new GUI()
 
-let H = new THREE.Matrix4()
-drawCoord(scene, H)
-
 // transformations.push(H)
-let tmp = H;
-for(let i = 0; i < DHparam.length; i++) {
-    let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], tmp)
-    tmp = K;
-    transformations.push(K)
+function calcTransformation(params: any, DHparam: any) {
+    let transformations = [];
+    let H = new THREE.Matrix4()
+    drawCoord(scene, H)
+    let tmp = H;
+    for (let i = 0; i < DHparam.length; i++) {
+        let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], rho[i], params.q[i], tmp)
+        tmp = K;
+        transformations.push(K)
 
-    let K_group = drawCoord(scene, K)
-    const Coord = gui.addFolder('Coordinate' + i)
+        let K_group = drawCoord(scene, K)
+        // const Coord = gui.addFolder('Coordinate' + i)
 
-    Coord.add(K_group, 'visible')
-
+        // Coord.add(K_group, 'visible')
+    }
+    return transformations
 }
 
+let transformations = calcTransformation(params, DHparam)
 addManipulatorJoint(transformations, scene)
-
 createFloor(scene, 8)
+
+const configVar = gui.addFolder("Configuration Variable");
+Object.keys(params.q).forEach((key) => {
+    configVar.add(params.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
+        scene.remove.apply(scene, scene.children);
+        transformations = calcTransformation(params, DHparam)
+        addManipulatorJoint(transformations, scene)
+        createFloor(scene, 8)
+        render()
+    })
+
+});
 
 animate()
