@@ -69,6 +69,6 @@ for(let i = 0; i < DHparam.length; i++) {
 
 addManipulatorJoint(transformations, scene)
 
-createFloor(scene)
+createFloor(scene, 8)
 
 animate()
