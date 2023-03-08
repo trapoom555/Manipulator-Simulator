@@ -1,17 +1,27 @@
 import * as THREE from 'three'
 
 export class Manipulator {
+    // Numerical
     DHparams: number[][];
     rho: boolean[];
     q: number[];
     framesTransformation: THREE.Matrix4[];
 
-    constructor(DHparams: number[][], rho: boolean[]) {
+    // Graphical
+    scene: THREE.Scene;
+    coordinateFramesUI: THREE.Group[];
+
+    constructor(DHparams: number[][], rho: boolean[], scene: THREE.Scene) {
+        // Numerical
         this.DHparams = DHparams;
         this.rho = rho;
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
         this.calcAllTransformations()
+
+        // Graphical
+        this.scene = scene;
+        this.coordinateFramesUI = [];
     }
 
     // Calculation Zone
@@ -63,33 +73,54 @@ export class Manipulator {
     }
 
     // Draw Zone
-    drawCoord(scene: THREE.Scene, H: THREE.Matrix4) {
-        let xAxis = new THREE.Vector3();
-        let yAxis = new THREE.Vector3();
-        let zAxis = new THREE.Vector3();
-        let origin = new THREE.Vector3();
+    drawCoord() {
+        for (let i = 0; i < this.framesTransformation.length; i++) {
+            let H = this.framesTransformation[i];
 
-        // extract orientation
-        H.extractBasis(xAxis, yAxis, zAxis)
+            let xAxis = new THREE.Vector3();
+            let yAxis = new THREE.Vector3();
+            let zAxis = new THREE.Vector3();
+            let origin = new THREE.Vector3();
 
-        // extract position
-        origin.setFromMatrixPosition(H)
+            // extract orientation
+            H.extractBasis(xAxis, yAxis, zAxis)
 
-        // x axis
-        const xAxisObj = new THREE.ArrowHelper(xAxis, origin, 1, "#ff0000");
-        // y axis
-        const yAxisObj = new THREE.ArrowHelper(yAxis, origin, 1, "#00ff00");
-        // z axis
-        const zAxisObj = new THREE.ArrowHelper(zAxis, origin, 1, "#0000ff");
+            // extract position
+            origin.setFromMatrixPosition(H)
 
-        const group = new THREE.Group();
-        group.add(xAxisObj);
-        group.add(yAxisObj);
-        group.add(zAxisObj);
+            // x axis
+            const xAxisObj = new THREE.ArrowHelper(xAxis, origin, 1, "#ff0000");
+            // y axis
+            const yAxisObj = new THREE.ArrowHelper(yAxis, origin, 1, "#00ff00");
+            // z axis
+            const zAxisObj = new THREE.ArrowHelper(zAxis, origin, 1, "#0000ff");
 
-        scene.add(group)
+            const group = new THREE.Group();
+            group.add(xAxisObj);
+            group.add(yAxisObj);
+            group.add(zAxisObj);
 
-        return group
+            this.scene.add(group)
+            this.coordinateFramesUI.push(group)
+        }
+    }
+
+    drawManipulatorJoint() {
+        for (let i = 1; i < this.framesTransformation.length; i++) {
+            const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            const cylinder = new THREE.Mesh(geometry, material);
+            cylinder.material.transparent = true;
+            cylinder.material.opacity = 0.5
+
+            const rotationMatrix = new THREE.Matrix4();
+            rotationMatrix.extractRotation(this.framesTransformation[i]);
+            cylinder.setRotationFromMatrix(rotationMatrix)
+            cylinder.rotateX(Math.PI / 2)
+
+            cylinder.position.setFromMatrixPosition(this.framesTransformation[i])
+            this.scene.add(cylinder);
+        }
     }
 
 
