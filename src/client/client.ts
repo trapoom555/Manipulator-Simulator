@@ -11,7 +11,7 @@ let DHparam = [
     [2, 0, 0, 0.524]
 ]
 
-let params = { q: [0, 0] }
+let q = [0, 0]
 let rho = [true, true]
 
 const scene = new THREE.Scene()
@@ -52,13 +52,13 @@ function render() {
 const gui = new GUI()
 
 // transformations.push(H)
-function calcTransformation(params: any, DHparam: any) {
+function calcTransformation(q: any, DHparam: any) {
     let transformations = [];
     let H = new THREE.Matrix4()
     drawCoord(scene, H)
     let tmp = H;
     for (let i = 0; i < DHparam.length; i++) {
-        let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], rho[i], params.q[i], tmp)
+        let K = DHtransformation(DHparam[i][0], DHparam[i][1], DHparam[i][2], DHparam[i][3], rho[i], q[i], tmp)
         tmp = K;
         transformations.push(K)
 
@@ -70,15 +70,15 @@ function calcTransformation(params: any, DHparam: any) {
     return transformations
 }
 
-let transformations = calcTransformation(params, DHparam)
+let transformations = calcTransformation(q, DHparam)
 addManipulatorJoint(transformations, scene)
 createFloor(scene, 8)
 
 const configVar = gui.addFolder("Configuration Variable");
-Object.keys(params.q).forEach((key) => {
-    configVar.add(params.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
+Object.keys(q).forEach((key) => {
+    configVar.add(q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
         scene.remove.apply(scene, scene.children);
-        transformations = calcTransformation(params, DHparam)
+        transformations = calcTransformation(q, DHparam)
         addManipulatorJoint(transformations, scene)
         createFloor(scene, 8)
         render()
