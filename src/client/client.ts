@@ -5,6 +5,7 @@ import { DHtransformation, drawCoord } from './coordinate'
 import createFloor from './floor'
 import { GUI } from 'dat.gui'
 import { addManipulatorJoint } from './manipulator_body'
+import { Manipulator } from './manipulator'
 
 let DHparam = [
     [0, Math.PI/2, 0, 0.785],
@@ -85,5 +86,8 @@ Object.keys(q).forEach((key) => {
     })
 
 });
+
+let m = new Manipulator(DHparam, rho)
+m.DHtransformation()
 
 animate()
