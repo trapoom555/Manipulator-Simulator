@@ -11,10 +11,11 @@ export class Manipulator {
         this.rho = rho;
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
+        this.CalcAllTransformations()
     }
 
     // Calculation Zone
-    DHtransformation() {
+    calcAllTransformations() {
         for (let i = 0; i < this.DHparams.length; i++) {
             let a = this.DHparams[i][0];
             let alpha = this.DHparams[i][1];
@@ -59,9 +60,6 @@ export class Manipulator {
             // push to framesTransformation
             this.framesTransformation.push(K)
         }
-
-        console.log(this.framesTransformation)
-
     }
 
     // Draw Zone

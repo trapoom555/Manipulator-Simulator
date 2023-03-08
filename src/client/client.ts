@@ -88,6 +88,6 @@ Object.keys(q).forEach((key) => {
 });
 
 let m = new Manipulator(DHparam, rho)
-m.DHtransformation()
+m.calcAllTransformations()
 
 animate()
