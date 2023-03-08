@@ -11,7 +11,7 @@ export class Manipulator {
         this.rho = rho;
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
-        this.CalcAllTransformations()
+        this.calcAllTransformations()
     }
 
     // Calculation Zone
