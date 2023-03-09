@@ -137,7 +137,7 @@ export class Manipulator {
         }
     }
 
-    cylinderMesh (pointX: THREE.Vector3, pointY: THREE.Vector3) {
+    cylinderMesh(pointX: THREE.Vector3, pointY: THREE.Vector3) {
         // edge from X to Y
         var direction = new THREE.Vector3().subVectors(pointY, pointX);
         const material = new THREE.MeshBasicMaterial({ color: 0x5B5B5B });
@@ -156,15 +156,34 @@ export class Manipulator {
 
         mesh.material.transparent = true;
         mesh.material.opacity = 0.7
-        
+
 
         return mesh;
     }
 
     drawManipulatorLink() {
         for (let i = 1; i < this.framesTransformation.length - 1; i++) {
+            let invFrameTransformation = this.framesTransformation[i].clone()
+            invFrameTransformation.invert();
+
+            let start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
+            let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
+
+            let vec = end.sub(start);
+            let vec_i_pov = vec.applyMatrix4(invFrameTransformation);
+
             // Link X Direction
-            this.scene.add(this.cylinderMesh(new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]), new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i+1])))
+            let vX = new THREE.Vector3(vec_i_pov.x, 0, 0).applyMatrix4(this.framesTransformation[i]);
+            let cylinderX = this.cylinderMesh(start, vX);
+            this.scene.add(cylinderX);
+            // Link Y Direction
+            let vY = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, 0).applyMatrix4(this.framesTransformation[i]);
+            let cylinderY = this.cylinderMesh(vX, vY);
+            this.scene.add(cylinderY);
+            // Link Z Direction
+            let vZ = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, vec_i_pov.z).applyMatrix4(this.framesTransformation[i]);
+            let cylinderZ = this.cylinderMesh(vY, vZ);
+            this.scene.add(cylinderZ);
         }
     }
 
