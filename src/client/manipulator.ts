@@ -84,6 +84,7 @@ export class Manipulator {
     draw() {
         this.drawCoord();
         this.drawManipulatorJoint();
+        this.drawManipulatorLink();
     }
 
     drawCoord() {
@@ -133,6 +134,37 @@ export class Manipulator {
 
             cylinder.position.setFromMatrixPosition(this.framesTransformation[i])
             this.scene.add(cylinder);
+        }
+    }
+
+    cylinderMesh (pointX: THREE.Vector3, pointY: THREE.Vector3) {
+        // edge from X to Y
+        var direction = new THREE.Vector3().subVectors(pointY, pointX);
+        const material = new THREE.MeshBasicMaterial({ color: 0x5B5B5B });
+        // Make the geometry (of "direction" length)
+        var geometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 6, 4, true);
+        // shift it so one end rests on the origin
+        geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, direction.length() / 2, 0));
+        // rotate it the right way for lookAt to work
+        geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+        // Make a mesh with the geometry
+        var mesh = new THREE.Mesh(geometry, material);
+        // Position it where we want
+        mesh.position.copy(pointX);
+        // And make it point to where we want
+        mesh.lookAt(pointY);
+
+        mesh.material.transparent = true;
+        mesh.material.opacity = 0.7
+        
+
+        return mesh;
+    }
+
+    drawManipulatorLink() {
+        for (let i = 1; i < this.framesTransformation.length - 1; i++) {
+            // Link X Direction
+            this.scene.add(this.cylinderMesh(new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]), new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i+1])))
         }
     }
 
