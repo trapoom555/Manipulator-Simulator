@@ -17,17 +17,13 @@ let rho = [true, true]
 
 const scene = new THREE.Scene()
 
-// const camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 ); 
-
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+    0.01,
+    100
 )
 camera.position.z = 2
-
-
 const renderer = new THREE.WebGLRenderer()
 const controls = new OrbitControls(camera, renderer.domElement)
 renderer.setSize(window.innerWidth, window.innerHeight)
