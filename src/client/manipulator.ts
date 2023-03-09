@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { GUI } from 'dat.gui'
 
 export class Manipulator {
     // Numerical
@@ -11,6 +12,9 @@ export class Manipulator {
     scene: THREE.Scene;
     coordinateFramesUI: THREE.Group[];
 
+    // GUI
+    gui: GUI;
+
     constructor(DHparams: number[][], rho: boolean[], scene: THREE.Scene) {
         // Numerical
         this.DHparams = DHparams;
@@ -22,6 +26,9 @@ export class Manipulator {
         // Graphical
         this.scene = scene;
         this.coordinateFramesUI = [];
+
+        // GUI
+        this.gui = new GUI();
     }
 
     // Calculation Zone
@@ -73,6 +80,12 @@ export class Manipulator {
     }
 
     // Draw Zone
+
+    draw() {
+        this.drawCoord();
+        this.drawManipulatorJoint();
+    }
+
     drawCoord() {
         for (let i = 0; i < this.framesTransformation.length; i++) {
             let H = this.framesTransformation[i];
@@ -123,6 +136,22 @@ export class Manipulator {
         }
     }
 
+    // GUI Zone
+    addGUI() {
+        this.configVarGUI();
+    }
 
+    configVarGUI() {
+        const configVar = this.gui.addFolder("Configuration Variable");
+        Object.keys(this.q).forEach((key) => {
+            configVar.add(this.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
+                this.scene.remove.apply(this.scene, this.scene.children);
+                this.framesTransformation = [new THREE.Matrix4()];
+                this.calcAllTransformations();
+                console.log(this.framesTransformation)
+                this.draw();
+            })
+        });
+    }
 
 }
