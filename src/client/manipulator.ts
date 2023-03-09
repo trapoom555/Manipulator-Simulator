@@ -7,6 +7,7 @@ export class Manipulator {
     rho: boolean[];
     q: number[];
     framesTransformation: THREE.Matrix4[];
+    Hne: THREE.Matrix4;
 
     // Graphical
     scene: THREE.Scene;
@@ -15,12 +16,13 @@ export class Manipulator {
     // GUI
     gui: GUI;
 
-    constructor(DHparams: number[][], rho: boolean[], scene: THREE.Scene) {
+    constructor(DHparams: number[][], rho: boolean[], Hne: THREE.Matrix4, scene: THREE.Scene) {
         // Numerical
         this.DHparams = DHparams;
         this.rho = rho;
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
+        this.Hne = Hne;
         this.calcAllTransformations()
 
         // Graphical
@@ -77,6 +79,10 @@ export class Manipulator {
             // push to framesTransformation
             this.framesTransformation.push(K)
         }
+        // let last = this.framesTransformation[this.framesTransformation.length - 1].clone();
+        // let Hne_glob = this.Hne.clone()
+        // Hne_glob.multiply(last);
+        // this.framesTransformation.push(Hne_glob);
     }
 
     // Draw Zone
@@ -169,8 +175,7 @@ export class Manipulator {
             let start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
             let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
 
-            let vec = end.sub(start);
-            let vec_i_pov = vec.applyMatrix4(invFrameTransformation);
+            let vec_i_pov = end.applyMatrix4(invFrameTransformation);
 
             // Link X Direction
             let vX = new THREE.Vector3(vec_i_pov.x, 0, 0).applyMatrix4(this.framesTransformation[i]);
@@ -199,7 +204,6 @@ export class Manipulator {
                 this.scene.remove.apply(this.scene, this.scene.children);
                 this.framesTransformation = [new THREE.Matrix4()];
                 this.calcAllTransformations();
-                console.log(this.framesTransformation)
                 this.draw();
             })
         });
