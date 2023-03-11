@@ -1,10 +1,6 @@
 import * as THREE from 'three'
-import { Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { DHtransformation, drawCoord } from './coordinate'
 import createFloor from './floor'
-import { GUI } from 'dat.gui'
-import { addManipulatorJoint } from './manipulator_body'
 import { Manipulator } from './manipulator'
 
 // Robot
