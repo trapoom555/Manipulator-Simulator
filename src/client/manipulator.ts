@@ -132,11 +132,17 @@ export class Manipulator {
     drawManipulatorJoint() {
         for (let i = 1; i < this.jointFrameTransformation.length; i++) {
             let geometry;
-            if (this.rho[i-1] == true) {
-                geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+            if (this.rho[i - 1] == true) {
+                if (this.q[i - 1] >= 0) {
+                    geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, this.q[i - 1] - 2 * Math.PI);
+                }
+                else {
+                    geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, 2 * Math.PI + this.q[i - 1]);
+                }
+
             }
             else {
-                geometry = new THREE.BoxGeometry(0.3,0.3,0.3);
+                geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
             }
             const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
             const mesh = new THREE.Mesh(geometry, material);
@@ -155,21 +161,44 @@ export class Manipulator {
 
     drawJointFromHome() {
         for (let i = 1; i < this.jointFrameTransformation.length; i++) {
-            let start = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i]);
-            let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
-            let color;
-            if (this.q[i-1] < 0) {
+            let color, mesh, geometry, material;
+
+            if (this.q[i - 1] < 0) {
                 color = 0xFF0000;
             }
             else {
                 color = 0x00FF00;
             }
-            let mesh = this.cylinderMesh(start, end, color)
+            if (this.rho[i - 1] == true) {
+                geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, this.q[i - 1]);
+                material = new THREE.MeshBasicMaterial({ color: color });
+                mesh = new THREE.Mesh(geometry, material);
+                mesh.material.transparent = true;
+                mesh.material.opacity = 0.7
+                const rotationMatrix = new THREE.Matrix4();
+                rotationMatrix.extractRotation(this.jointFrameTransformation[i]);
+                mesh.setRotationFromMatrix(rotationMatrix)
+                mesh.rotateX(Math.PI / 2)
+
+                mesh.position.setFromMatrixPosition(this.jointFrameTransformation[i])
+            }
+            else {
+                let start = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i]);
+                let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
+                if (this.q[i - 1] < 0) {
+                    color = 0xFF0000;
+                }
+                else {
+                    color = 0x00FF00;
+                }
+                mesh = this.cylinderMesh(start, end, color)
+            }
+
             this.scene.add(mesh);
         }
     }
 
-    cylinderMesh(pointX: THREE.Vector3, pointY: THREE.Vector3, color=0x5B5B5B) {
+    cylinderMesh(pointX: THREE.Vector3, pointY: THREE.Vector3, color = 0x5B5B5B) {
         // edge from X to Y
         var direction = new THREE.Vector3().subVectors(pointY, pointX);
         const material = new THREE.MeshBasicMaterial({ color: color });
