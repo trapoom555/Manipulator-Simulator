@@ -82,10 +82,10 @@ export class Manipulator {
             // push to framesTransformation
             this.framesTransformation.push(K)
         }
-        // let last = this.framesTransformation[this.framesTransformation.length - 1].clone();
-        // let Hne_glob = this.Hne.clone()
-        // Hne_glob.multiply(last);
-        // this.framesTransformation.push(Hne_glob);
+        let last = this.framesTransformation[this.framesTransformation.length - 1].clone();
+        let Hne_glob = new THREE.Matrix4();
+        Hne_glob = this.Hne.clone().premultiply(last);
+        this.framesTransformation.push(Hne_glob);
     }
 
     // Draw Zone
@@ -224,11 +224,19 @@ export class Manipulator {
 
     drawManipulatorLink() {
         for (let i = 1; i < this.framesTransformation.length - 1; i++) {
+            let start, end;
+
             let invFrameTransformation = this.framesTransformation[i].clone()
             invFrameTransformation.invert();
 
-            let start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
-            let end = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i + 1]);
+            start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
+            if (i < this.framesTransformation.length - 2) {
+                end = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i + 1]);
+            }
+            else {
+                end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
+            }
+
 
             let vec_i_pov = end.applyMatrix4(invFrameTransformation);
 
