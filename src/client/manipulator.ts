@@ -7,6 +7,7 @@ export class Manipulator {
     rho: boolean[];
     q: number[];
     framesTransformation: THREE.Matrix4[];
+    jointFrameTransformation: THREE.Matrix4[];
     Hne: THREE.Matrix4;
 
     // Graphical
@@ -23,6 +24,7 @@ export class Manipulator {
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
         this.Hne = Hne;
+        this.jointFrameTransformation = [...this.framesTransformation]
         this.calcAllTransformations()
 
         // Graphical
@@ -62,6 +64,7 @@ export class Manipulator {
             rotationMatrix.makeRotationAxis(new THREE.Vector3(0, 0, 1), theta);
             K.multiply(rotationMatrix);
 
+            this.jointFrameTransformation.push(K.clone())
             // joint config
             if (rho == true) {
                 // revolute joint
@@ -90,6 +93,7 @@ export class Manipulator {
     draw() {
         this.drawCoord();
         this.drawManipulatorJoint();
+        this.drawJointFromHome();
         this.drawManipulatorLink();
     }
 
@@ -126,7 +130,7 @@ export class Manipulator {
     }
 
     drawManipulatorJoint() {
-        for (let i = 1; i < this.framesTransformation.length; i++) {
+        for (let i = 1; i < this.jointFrameTransformation.length; i++) {
             let geometry;
             if (this.rho[i-1] == true) {
                 geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
@@ -140,19 +144,35 @@ export class Manipulator {
             mesh.material.opacity = 0.5
 
             const rotationMatrix = new THREE.Matrix4();
-            rotationMatrix.extractRotation(this.framesTransformation[i]);
+            rotationMatrix.extractRotation(this.jointFrameTransformation[i]);
             mesh.setRotationFromMatrix(rotationMatrix)
             mesh.rotateX(Math.PI / 2)
 
-            mesh.position.setFromMatrixPosition(this.framesTransformation[i])
+            mesh.position.setFromMatrixPosition(this.jointFrameTransformation[i])
             this.scene.add(mesh);
         }
     }
 
-    cylinderMesh(pointX: THREE.Vector3, pointY: THREE.Vector3) {
+    drawJointFromHome() {
+        for (let i = 1; i < this.jointFrameTransformation.length; i++) {
+            let start = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i]);
+            let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
+            let color;
+            if (this.q[i-1] < 0) {
+                color = 0xFF0000;
+            }
+            else {
+                color = 0x00FF00;
+            }
+            let mesh = this.cylinderMesh(start, end, color)
+            this.scene.add(mesh);
+        }
+    }
+
+    cylinderMesh(pointX: THREE.Vector3, pointY: THREE.Vector3, color=0x5B5B5B) {
         // edge from X to Y
         var direction = new THREE.Vector3().subVectors(pointY, pointX);
-        const material = new THREE.MeshBasicMaterial({ color: 0x5B5B5B });
+        const material = new THREE.MeshBasicMaterial({ color: color });
         // Make the geometry (of "direction" length)
         var geometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 6, 4, true);
         // shift it so one end rests on the origin
@@ -179,7 +199,7 @@ export class Manipulator {
             invFrameTransformation.invert();
 
             let start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
-            let end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
+            let end = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i + 1]);
 
             let vec_i_pov = end.applyMatrix4(invFrameTransformation);
 
@@ -209,6 +229,7 @@ export class Manipulator {
             configVar.add(this.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
                 this.scene.remove.apply(this.scene, this.scene.children);
                 this.framesTransformation = [new THREE.Matrix4()];
+                this.jointFrameTransformation = [...this.framesTransformation];
                 this.calcAllTransformations();
                 this.draw();
             })
