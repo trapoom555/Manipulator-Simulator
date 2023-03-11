@@ -11,10 +11,18 @@ let DHparam = [
 ]
 let rho = [true, false, true]
 
-let HneMatrix = [1, 0, 0, 1,
-                 0, 1, 0, 0,
-                 0, 0, 1, 0,
-                 0, 0, 0, 1]
+// let HneMatrix = [1, 0, 0, 1,
+//                  0, 1, 0, 0,
+//                  0, 0, 1, 0,
+//                  0, 0, 0, 1]
+
+// column major matrix
+let HneMatrix = [1,0,0,0,
+    0,1,0,0,
+    0,0,1,0,
+    1,0,0,1
+]
+
 
 let Hne = new THREE.Matrix4().fromArray(HneMatrix)
 // Scene
