@@ -46,6 +46,7 @@ function onWindowResize() {
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
     render()
+    // scene.remove.apply(scene, scene.children);
 }
 
 function animate() {

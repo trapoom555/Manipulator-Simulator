@@ -16,6 +16,7 @@ export class Manipulator {
 
     // GUI
     gui: GUI;
+    isDrawCoord: boolean[];
 
     constructor(DHparams: number[][], rho: boolean[], Hne: THREE.Matrix4, scene: THREE.Scene) {
         // Numerical
@@ -33,6 +34,7 @@ export class Manipulator {
 
         // GUI
         this.gui = new GUI();
+        this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length+1).fill(true);
     }
 
     // Calculation Zone
@@ -100,33 +102,35 @@ export class Manipulator {
 
     drawCoord() {
         for (let i = 0; i < this.framesTransformation.length; i++) {
-            let H = this.framesTransformation[i];
+            if (this.isDrawCoord[i]) {
+                let H = this.framesTransformation[i];
 
-            let xAxis = new THREE.Vector3();
-            let yAxis = new THREE.Vector3();
-            let zAxis = new THREE.Vector3();
-            let origin = new THREE.Vector3();
+                let xAxis = new THREE.Vector3();
+                let yAxis = new THREE.Vector3();
+                let zAxis = new THREE.Vector3();
+                let origin = new THREE.Vector3();
 
-            // extract orientation
-            H.extractBasis(xAxis, yAxis, zAxis)
+                // extract orientation
+                H.extractBasis(xAxis, yAxis, zAxis)
 
-            // extract position
-            origin.setFromMatrixPosition(H)
+                // extract position
+                origin.setFromMatrixPosition(H)
 
-            // x axis
-            const xAxisObj = new THREE.ArrowHelper(xAxis, origin, 1, "#ff0000");
-            // y axis
-            const yAxisObj = new THREE.ArrowHelper(yAxis, origin, 1, "#00ff00");
-            // z axis
-            const zAxisObj = new THREE.ArrowHelper(zAxis, origin, 1, "#0000ff");
+                // x axis
+                const xAxisObj = new THREE.ArrowHelper(xAxis, origin, 1, "#ff0000");
+                // y axis
+                const yAxisObj = new THREE.ArrowHelper(yAxis, origin, 1, "#00ff00");
+                // z axis
+                const zAxisObj = new THREE.ArrowHelper(zAxis, origin, 1, "#0000ff");
 
-            const group = new THREE.Group();
-            group.add(xAxisObj);
-            group.add(yAxisObj);
-            group.add(zAxisObj);
+                const group = new THREE.Group();
+                group.add(xAxisObj);
+                group.add(yAxisObj);
+                group.add(zAxisObj);
 
-            this.scene.add(group)
-            this.coordinateFramesUI.push(group)
+                this.scene.add(group)
+                this.coordinateFramesUI.push(group)
+            }
         }
     }
 
@@ -263,18 +267,18 @@ export class Manipulator {
 
         const geometry_grip = new THREE.BoxGeometry(0.1, 0.1, 0.2);
         let left = new THREE.Mesh(geometry_grip, material);
-        left.rotateY(Math.PI/2)
+        left.rotateY(Math.PI / 2)
         left.translateX(0.15)
         left.translateZ(0.15)
         base.add(left)
 
         let right = new THREE.Mesh(geometry_grip, material);
-        right.rotateY(Math.PI/2)
+        right.rotateY(Math.PI / 2)
         right.translateX(-0.15)
         right.translateZ(0.15)
         base.add(right)
 
-        base.applyMatrix4(this.framesTransformation[this.framesTransformation.length-1])
+        base.applyMatrix4(this.framesTransformation[this.framesTransformation.length - 1])
 
         base.material.transparent = true;
         base.material.opacity = 0.8;
@@ -286,6 +290,7 @@ export class Manipulator {
     // GUI Zone
     addGUI() {
         this.configVarGUI();
+        this.isDrawCoordGUI();
     }
 
     configVarGUI() {
@@ -296,6 +301,16 @@ export class Manipulator {
                 this.framesTransformation = [new THREE.Matrix4()];
                 this.jointFrameTransformation = [...this.framesTransformation];
                 this.calcAllTransformations();
+                this.draw();
+            })
+        });
+    }
+
+    isDrawCoordGUI() {
+        const isDrawCoord = this.gui.addFolder("Show Coordinates");
+        Object.keys(this.isDrawCoord).forEach((key) => {
+            isDrawCoord.add(this.isDrawCoord, key).onChange((val) => {
+                this.scene.remove.apply(this.scene, this.scene.children);
                 this.draw();
             })
         });
