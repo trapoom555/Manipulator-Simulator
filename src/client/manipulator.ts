@@ -95,6 +95,7 @@ export class Manipulator {
         this.drawManipulatorJoint();
         this.drawJointFromHome();
         this.drawManipulatorLink();
+        this.drawGripper();
     }
 
     drawCoord() {
@@ -253,6 +254,33 @@ export class Manipulator {
             let cylinderZ = this.cylinderMesh(vY, vZ);
             this.scene.add(cylinderZ);
         }
+    }
+
+    drawGripper() {
+        const geometry_base = new THREE.BoxGeometry(0.1, 0.1, 0.4);
+        const material = new THREE.MeshBasicMaterial({ color: 0xF8C8DC });
+        let base = new THREE.Mesh(geometry_base, material);
+
+        const geometry_grip = new THREE.BoxGeometry(0.1, 0.1, 0.2);
+        let left = new THREE.Mesh(geometry_grip, material);
+        left.rotateY(Math.PI/2)
+        left.translateX(0.15)
+        left.translateZ(0.15)
+        base.add(left)
+
+        let right = new THREE.Mesh(geometry_grip, material);
+        right.rotateY(Math.PI/2)
+        right.translateX(-0.15)
+        right.translateZ(0.15)
+        base.add(right)
+
+        base.applyMatrix4(this.framesTransformation[this.framesTransformation.length-1])
+
+        base.material.transparent = true;
+        base.material.opacity = 0.8;
+
+        this.scene.add(base)
+
     }
 
     // GUI Zone
