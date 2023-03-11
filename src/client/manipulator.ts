@@ -127,19 +127,25 @@ export class Manipulator {
 
     drawManipulatorJoint() {
         for (let i = 1; i < this.framesTransformation.length; i++) {
-            const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+            let geometry;
+            if (this.rho[i-1] == true) {
+                geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+            }
+            else {
+                geometry = new THREE.BoxGeometry(0.3,0.3,0.3);
+            }
             const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-            const cylinder = new THREE.Mesh(geometry, material);
-            cylinder.material.transparent = true;
-            cylinder.material.opacity = 0.5
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.material.transparent = true;
+            mesh.material.opacity = 0.5
 
             const rotationMatrix = new THREE.Matrix4();
             rotationMatrix.extractRotation(this.framesTransformation[i]);
-            cylinder.setRotationFromMatrix(rotationMatrix)
-            cylinder.rotateX(Math.PI / 2)
+            mesh.setRotationFromMatrix(rotationMatrix)
+            mesh.rotateX(Math.PI / 2)
 
-            cylinder.position.setFromMatrixPosition(this.framesTransformation[i])
-            this.scene.add(cylinder);
+            mesh.position.setFromMatrixPosition(this.framesTransformation[i])
+            this.scene.add(mesh);
         }
     }
 

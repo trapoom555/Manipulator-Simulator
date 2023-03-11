@@ -9,7 +9,7 @@ let DHparam = [
     [2, 0, 0.5, 0.524],
     [1, 0, 0, 0],
 ]
-let rho = [true, true, true]
+let rho = [true, false, true]
 
 let HneMatrix = [1, 0, 0, 1,
                  0, 1, 0, 0,
