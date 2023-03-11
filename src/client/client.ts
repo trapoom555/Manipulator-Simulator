@@ -7,7 +7,7 @@ import { Manipulator } from './manipulator'
 let DHparam = [
     [0, Math.PI/2, 0, 0.785],
     [2, 0, 0.5, 0.524],
-    [1, 0, 0, 0],
+    [1, 0, 0, -Math.PI/2],
 ]
 let rho = [true, false, true]
 

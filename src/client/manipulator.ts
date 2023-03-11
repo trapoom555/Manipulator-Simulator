@@ -17,6 +17,9 @@ export class Manipulator {
     // GUI
     gui: GUI;
     isDrawCoord: boolean[];
+    isDrawJoint: boolean[];
+    isDrawLink: boolean[];
+    isDrawGripper: {Gripper: true};
 
     constructor(DHparams: number[][], rho: boolean[], Hne: THREE.Matrix4, scene: THREE.Scene) {
         // Numerical
@@ -35,6 +38,9 @@ export class Manipulator {
         // GUI
         this.gui = new GUI();
         this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length+1).fill(true);
+        this.isDrawJoint = Array<boolean>(this.jointFrameTransformation.length-1).fill(true);
+        this.isDrawLink = Array<boolean>(this.jointFrameTransformation.length-1).fill(true);
+        this.isDrawGripper = {Gripper: true};
     }
 
     // Calculation Zone
@@ -97,7 +103,9 @@ export class Manipulator {
         this.drawManipulatorJoint();
         this.drawJointFromHome();
         this.drawManipulatorLink();
-        this.drawGripper();
+        if (this.isDrawGripper.Gripper) {
+            this.drawGripper();
+        }
     }
 
     drawCoord() {
@@ -136,7 +144,8 @@ export class Manipulator {
 
     drawManipulatorJoint() {
         for (let i = 1; i < this.jointFrameTransformation.length; i++) {
-            let geometry;
+            if(this.isDrawJoint[i-1]) {
+                let geometry;
             if (this.rho[i - 1] == true) {
                 if (this.q[i - 1] >= 0) {
                     geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, this.q[i - 1] - 2 * Math.PI);
@@ -162,6 +171,9 @@ export class Manipulator {
             mesh.position.setFromMatrixPosition(this.jointFrameTransformation[i])
             this.scene.add(mesh);
         }
+
+            }
+            
     }
 
     drawJointFromHome() {
@@ -229,7 +241,8 @@ export class Manipulator {
 
     drawManipulatorLink() {
         for (let i = 1; i < this.framesTransformation.length - 1; i++) {
-            let start, end;
+            if(this.isDrawLink[i-1]) {
+                let start, end;
 
             let invFrameTransformation = this.framesTransformation[i].clone()
             invFrameTransformation.invert();
@@ -258,6 +271,8 @@ export class Manipulator {
             let cylinderZ = this.cylinderMesh(vY, vZ);
             this.scene.add(cylinderZ);
         }
+            }
+            
     }
 
     drawGripper() {
@@ -290,7 +305,15 @@ export class Manipulator {
     // GUI Zone
     addGUI() {
         this.configVarGUI();
-        this.isDrawCoordGUI();
+        const showFolder = this.gui.addFolder("Show/ Hide");
+        this.isDrawCoordGUI(showFolder);
+        this.isDrawJointGUI(showFolder);
+        this.isDrawLinkGUI(showFolder);
+        showFolder.add(this.isDrawGripper, 'Gripper').onChange((val) => {
+            this.scene.remove.apply(this.scene, this.scene.children);
+            this.draw();
+        })
+
     }
 
     configVarGUI() {
@@ -306,10 +329,30 @@ export class Manipulator {
         });
     }
 
-    isDrawCoordGUI() {
-        const isDrawCoord = this.gui.addFolder("Show Coordinates");
+    isDrawCoordGUI(folder: GUI) {
+        const isDrawCoord = folder.addFolder("Frames");
         Object.keys(this.isDrawCoord).forEach((key) => {
             isDrawCoord.add(this.isDrawCoord, key).onChange((val) => {
+                this.scene.remove.apply(this.scene, this.scene.children);
+                this.draw();
+            })
+        });
+    }
+
+    isDrawJointGUI(folder: GUI) {
+        const isDrawJoint = folder.addFolder("Joints");
+        Object.keys(this.isDrawJoint).forEach((key) => {
+            isDrawJoint.add(this.isDrawJoint, key).onChange((val) => {
+                this.scene.remove.apply(this.scene, this.scene.children);
+                this.draw();
+            })
+        });
+    }
+
+    isDrawLinkGUI(folder: GUI) {
+        const isDrawLink = folder.addFolder("Links");
+        Object.keys(this.isDrawLink).forEach((key) => {
+            isDrawLink.add(this.isDrawLink, key).onChange((val) => {
                 this.scene.remove.apply(this.scene, this.scene.children);
                 this.draw();
             })
