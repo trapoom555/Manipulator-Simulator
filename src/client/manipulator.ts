@@ -16,6 +16,7 @@ export class Manipulator {
 
     // GUI
     gui: GUI;
+    guiFolder: GUI[];
     isDrawCoord: boolean[];
     isDrawJoint: boolean[];
     isDrawLink: boolean[];
@@ -37,6 +38,7 @@ export class Manipulator {
 
         // GUI
         this.gui = new GUI();
+        this.guiFolder = [];
         this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length + 1).fill(true);
         this.isDrawJoint = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
         this.isDrawLink = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
@@ -304,8 +306,11 @@ export class Manipulator {
 
     // GUI Zone
     addGUI() {
-        this.configVarGUI();
+        const configVarFolder = this.gui.addFolder("Configuration Variable");
         const showFolder = this.gui.addFolder("Show/ Hide");
+        this.guiFolder = [showFolder, configVarFolder]
+
+        this.configVarGUI(configVarFolder);
         this.isDrawCoordGUI(showFolder);
         this.isDrawJointGUI(showFolder);
         this.isDrawLinkGUI(showFolder);
@@ -316,10 +321,9 @@ export class Manipulator {
 
     }
 
-    configVarGUI() {
-        const configVar = this.gui.addFolder("Configuration Variable");
+    configVarGUI(folder: GUI) {
         Object.keys(this.q).forEach((key) => {
-            configVar.add(this.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
+            folder.add(this.q, key, -Math.PI, Math.PI, 0.0001).onChange((val) => {
                 this.scene.remove.apply(this.scene, this.scene.children);
                 this.framesTransformation = [new THREE.Matrix4()];
                 this.jointFrameTransformation = [...this.framesTransformation];
@@ -359,14 +363,35 @@ export class Manipulator {
         });
     }
 
+    removeGUIfolder() {
+        for(let i=0; i < this.guiFolder.length; i++) {
+            this.gui.removeFolder(this.guiFolder[i])
+        }
+        this.guiFolder = []
+    }
+
     // onUpdateParam
     onUpdateParam(DHparams: number[][], rho: boolean[]) {
         this.DHparams = DHparams;
         this.rho = rho;
+        this.q = Array<number>(this.rho.length).fill(0);
+        this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
+        this.jointFrameTransformation = [...this.framesTransformation]
+        this.calcAllTransformations()
+        
+        this.coordinateFramesUI = [];
+
+        // GUI
+        this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length + 1).fill(true);
+        this.isDrawJoint = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
+        this.isDrawLink = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
+        this.isDrawGripper = { Gripper: true };
+
+        this.removeGUIfolder()
+        this.addGUI()
+
+        // Draw
         this.scene.remove.apply(this.scene, this.scene.children);
-        this.framesTransformation = [new THREE.Matrix4()];
-        this.jointFrameTransformation = [...this.framesTransformation];
-        this.calcAllTransformations();
         this.draw();
     }
 
