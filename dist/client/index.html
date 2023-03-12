@@ -1,18 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Three.js TypeScript Tutorials by Sean Bradley : https://sbcode.net/threejs</title>
-        <style>
-            body {
-                overflow: hidden;
-                margin: 0px;
-            }
-        </style>
-    </head>
 
-    <body>
-        <script type="module" src="bundle.js"></script>
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Three.js TypeScript Tutorials by Sean Bradley : https://sbcode.net/threejs</title>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0px;
+        }
+
+        #dh-des {
+            top: 10px;
+            left: 10px;
+            width: fit-content;
+            color: white;
+        }
+
+        #dh {
+            top: 40px;
+            left: 10px;
+            width: fit-content;
+            text-align: center;
+            display: block;
+            color: white;
+            border: none;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid white;
+            border-collapse: collapse;
+        }
+
+        th {
+            width: 50px;
+        }
+
+        input {
+            background-color: transparent;
+            color: white;
+            border: none;
+            text-align: center;
+            width: 50px;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        #add-row-btn {
+            display: block;
+            background-color: transparent;
+            font-size: inherit;
+            font-family: inherit;
+            border: solid white 1px;
+            color: white;
+            top: 10px;
+            left: 100px;
+            cursor: pointer;
+        }
+
+        #ui-layer {
+            position: absolute;
+            z-index: 100;
+            width: fit-content;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script type="module" src="bundle.js"></script>
+    <div id="ui-layer">
+        <div id="dh-des">DH-Table</div>
+        <table id="dh">
+            <tr>
+                <th>a</th>
+                <th>𝜶</th>
+                <th>d</th>
+                <th>θ</th>
+            </tr>
+        </table>
+    <button id="add-row-btn">Add Row</button>
+    <button id="spawn-robot">Spawn Robot</button>
+    </div>
+</body>
+
 </html>

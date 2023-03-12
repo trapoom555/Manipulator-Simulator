@@ -5,23 +5,80 @@ import { Manipulator } from './manipulator'
 
 // Robot
 let DHparam = [
-    [0, Math.PI/2, 0, 0.785],
+    [0, 1.571, 0, 0.785],
     [2, 0, 0.5, 0.524],
-    [1, 0, 0, -Math.PI/2],
+    [1, 0, 0, -1.571],
 ]
+
+// Joint Type
 let rho = [true, false, true]
 
-// let HneMatrix = [1, 0, 0, 1,
-//                  0, 1, 0, 0,
-//                  0, 0, 1, 0,
-//                  0, 0, 0, 1]
-
 // column major matrix
-let HneMatrix = [1,0,0,0,
-    0,1,0,0,
-    0,0,1,0,
-    1,0,0,1
+let HneMatrix = [1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    1, 0, 0, 1
 ]
+
+function getDHParamFromTableUI() {
+    let table = document.getElementById("dh") as HTMLTableElement;
+    let lastRow = table.rows.length - 1;
+    let lastColumn = 4;
+
+    let DHparam = [];
+    for (let i = 0; i < lastRow; i++) {
+        let tmp = []
+        for (let j = 0; j < lastColumn; j++) {
+            let id = i.toString() + "," + j.toString()
+            let input = document.getElementById(id) as HTMLInputElement;
+            tmp.push(Number(input.value))
+        }
+        DHparam.push(tmp)
+    }
+    return DHparam
+}
+
+function spawnRobot(DHparam: number[][]) {
+    let m = new Manipulator(DHparam, rho, Hne, scene)
+    m.draw()
+    m.addGUI()
+}
+
+function addDHTableRow(tableData?: number[][]) {
+    let table = document.getElementById("dh") as HTMLTableElement;
+    let lastRowIdx = table.rows.length - 1;
+    let row = table.insertRow(-1);
+    for (let i = 0; i < 4; i++) {
+        let cell = row.insertCell(i);
+        let id = lastRowIdx.toString() + "," + i.toString()
+        let data = 0;
+        if (tableData != null) {
+            data = tableData[lastRowIdx][i];
+        }
+        cell.innerHTML = "<input id='" + id + "' value=" + data.toString() + "> </input>";
+    }
+}
+
+let addRowBtn = document.getElementById("add-row-btn") as HTMLButtonElement;
+if (addRowBtn) {
+    addRowBtn.addEventListener("click", function () {
+        addDHTableRow();
+    });
+}
+
+let spawnRobotBtn = document.getElementById("spawn-robot") as HTMLButtonElement;
+if (spawnRobotBtn) {
+    spawnRobotBtn.addEventListener("click", function () {
+        DHparam = getDHParamFromTableUI();
+        spawnRobot(DHparam);
+    });
+}
+
+
+// Add DH-Table to UI
+for (let i = 0; i < DHparam.length; i++) {
+    addDHTableRow(DHparam);
+}
 
 
 let Hne = new THREE.Matrix4().fromArray(HneMatrix)
@@ -59,8 +116,6 @@ function render() {
     renderer.render(scene, camera)
 }
 
-let m = new Manipulator(DHparam, rho, Hne, scene)
-m.draw()
-m.addGUI()
+spawnRobot(DHparam)
 
 animate()
