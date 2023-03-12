@@ -181,7 +181,6 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate)
-    createFloor(scene, 8)
     controls.update()
     render()
 }
@@ -194,5 +193,6 @@ let Hne = new THREE.Matrix4().fromArray(HneMatrix)
 let m = new Manipulator(DHparam, rho, Hne, scene)
 m.draw()
 m.addGUI()
+createFloor(scene, 8)
 
 animate()

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GUI } from 'dat.gui'
+import createFloor from './floor';
 
 export class Manipulator {
     // Numerical
@@ -101,6 +102,7 @@ export class Manipulator {
     // Draw Zone
 
     draw() {
+        createFloor(this.scene, 8);
         this.drawCoord();
         this.drawManipulatorJoint();
         this.drawJointFromHome();
