@@ -38,10 +38,12 @@ function getDHParamFromTableUI() {
     return DHparam
 }
 
-function addDHTableRow(tableData?: number[][]) {
-    let table = document.getElementById("dh") as HTMLTableElement;
-    let lastRowIdx = table.rows.length - 1;
-    let row = table.insertRow(-1);
+function addTableRow(tableData?: number[][], isRevoluteData?: boolean[]) {
+
+    // add DH Table Row
+    let DHtable = document.getElementById("dh") as HTMLTableElement;
+    let lastRowIdx = DHtable.rows.length - 1;
+    let row = DHtable.insertRow(-1);
     for (let i = 0; i < 4; i++) {
         let cell = row.insertCell(i);
         let id = lastRowIdx.toString() + "," + i.toString()
@@ -51,12 +53,30 @@ function addDHTableRow(tableData?: number[][]) {
         }
         cell.innerHTML = "<input id='" + id + "' value=" + data.toString() + "> </input>";
     }
+
+    // add rho Table Row
+    let rhoTable = document.getElementById("rho") as HTMLTableElement;
+    row = rhoTable.insertRow(-1);
+    let cell = row.insertCell(0);
+    if (isRevoluteData != null) {
+        if(isRevoluteData[lastRowIdx]) {
+            cell.innerHTML = "<input type='checkbox' id='" + lastRowIdx.toString() +"' checked> </input>";
+            console.log('ei')
+        }
+        else {
+            cell.innerHTML = "<input type='checkbox' id='" + lastRowIdx.toString() +"'> </input>";
+        }
+    }
+    else {
+        cell.innerHTML = "<input type='checkbox' id='" + lastRowIdx.toString() +"' checked> </input>";
+    }
+    
 }
 
 let addRowBtn = document.getElementById("add-row-btn") as HTMLButtonElement;
 if (addRowBtn) {
     addRowBtn.addEventListener("click", function () {
-        addDHTableRow();
+        addTableRow();
     });
 }
 
@@ -71,7 +91,7 @@ if (spawnRobotBtn) {
 
 // Add DH-Table to UI
 for (let i = 0; i < DHparam.length; i++) {
-    addDHTableRow(DHparam);
+    addTableRow(DHparam, rho);
 }
 
 

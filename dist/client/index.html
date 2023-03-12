@@ -11,7 +11,7 @@
             margin: 0px;
         }
 
-        #dh-des {
+        .dh-des {
             top: 10px;
             left: 10px;
             width: fit-content;
@@ -26,6 +26,14 @@
             display: block;
             color: white;
             border: none;
+            margin-right: 20px;
+        }
+
+        #rho {
+            text-align: center;
+            display: block;
+            color: white;
+            border: none;
         }
 
         table,
@@ -36,7 +44,8 @@
         }
 
         th {
-            width: 50px;
+            width: 70px;
+            height: 25px;
         }
 
         input {
@@ -67,23 +76,39 @@
             width: fit-content;
         }
 
+        #table-wrapper {
+            display: flex;
+            flex-direction: row;
+        }
     </style>
 </head>
 
 <body>
     <script type="module" src="bundle.js"></script>
     <div id="ui-layer">
-        <div id="dh-des">DH-Table</div>
-        <table id="dh">
-            <tr>
-                <th>a</th>
-                <th>𝜶</th>
-                <th>d</th>
-                <th>θ</th>
-            </tr>
-        </table>
-    <button id="add-row-btn">Add Row</button>
-    <button id="spawn-robot">Spawn Robot</button>
+        <div id="table-wrapper">
+            <div>
+                <div class="dh-des">DH-Table</div>
+                <table id="dh">
+                    <tr>
+                        <th>a</th>
+                        <th>𝜶</th>
+                        <th>d</th>
+                        <th>θ</th>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <div class="dh-des">isRevolute</div>
+                <table id="rho">
+                    <tr>
+                        <th>ρ</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <button id="add-row-btn">Add Row</button>
+        <button id="spawn-robot">Spawn Robot</button>
     </div>
 </body>
 
