@@ -38,12 +38,6 @@ function getDHParamFromTableUI() {
     return DHparam
 }
 
-function spawnRobot(DHparam: number[][]) {
-    let m = new Manipulator(DHparam, rho, Hne, scene)
-    m.draw()
-    m.addGUI()
-}
-
 function addDHTableRow(tableData?: number[][]) {
     let table = document.getElementById("dh") as HTMLTableElement;
     let lastRowIdx = table.rows.length - 1;
@@ -70,7 +64,7 @@ let spawnRobotBtn = document.getElementById("spawn-robot") as HTMLButtonElement;
 if (spawnRobotBtn) {
     spawnRobotBtn.addEventListener("click", function () {
         DHparam = getDHParamFromTableUI();
-        spawnRobot(DHparam);
+        m.onUpdateParam(DHparam)
     });
 }
 
@@ -116,6 +110,8 @@ function render() {
     renderer.render(scene, camera)
 }
 
-spawnRobot(DHparam)
+let m = new Manipulator(DHparam, rho, Hne, scene)
+m.draw()
+m.addGUI()
 
 animate()

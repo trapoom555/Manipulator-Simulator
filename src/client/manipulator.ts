@@ -19,7 +19,7 @@ export class Manipulator {
     isDrawCoord: boolean[];
     isDrawJoint: boolean[];
     isDrawLink: boolean[];
-    isDrawGripper: {Gripper: true};
+    isDrawGripper: { Gripper: true };
 
     constructor(DHparams: number[][], rho: boolean[], Hne: THREE.Matrix4, scene: THREE.Scene) {
         // Numerical
@@ -37,10 +37,10 @@ export class Manipulator {
 
         // GUI
         this.gui = new GUI();
-        this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length+1).fill(true);
-        this.isDrawJoint = Array<boolean>(this.jointFrameTransformation.length-1).fill(true);
-        this.isDrawLink = Array<boolean>(this.jointFrameTransformation.length-1).fill(true);
-        this.isDrawGripper = {Gripper: true};
+        this.isDrawCoord = Array<boolean>(this.jointFrameTransformation.length + 1).fill(true);
+        this.isDrawJoint = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
+        this.isDrawLink = Array<boolean>(this.jointFrameTransformation.length - 1).fill(true);
+        this.isDrawGripper = { Gripper: true };
     }
 
     // Calculation Zone
@@ -144,36 +144,36 @@ export class Manipulator {
 
     drawManipulatorJoint() {
         for (let i = 1; i < this.jointFrameTransformation.length; i++) {
-            if(this.isDrawJoint[i-1]) {
+            if (this.isDrawJoint[i - 1]) {
                 let geometry;
-            if (this.rho[i - 1] == true) {
-                if (this.q[i - 1] >= 0) {
-                    geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, this.q[i - 1] - 2 * Math.PI);
+                if (this.rho[i - 1] == true) {
+                    if (this.q[i - 1] >= 0) {
+                        geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, this.q[i - 1] - 2 * Math.PI);
+                    }
+                    else {
+                        geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, 2 * Math.PI + this.q[i - 1]);
+                    }
+
                 }
                 else {
-                    geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32, undefined, undefined, Math.PI / 2, 2 * Math.PI + this.q[i - 1]);
+                    geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
                 }
+                const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.material.transparent = true;
+                mesh.material.opacity = 0.5
 
+                const rotationMatrix = new THREE.Matrix4();
+                rotationMatrix.extractRotation(this.jointFrameTransformation[i]);
+                mesh.setRotationFromMatrix(rotationMatrix)
+                mesh.rotateX(Math.PI / 2)
+
+                mesh.position.setFromMatrixPosition(this.jointFrameTransformation[i])
+                this.scene.add(mesh);
             }
-            else {
-                geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-            }
-            const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.material.transparent = true;
-            mesh.material.opacity = 0.5
 
-            const rotationMatrix = new THREE.Matrix4();
-            rotationMatrix.extractRotation(this.jointFrameTransformation[i]);
-            mesh.setRotationFromMatrix(rotationMatrix)
-            mesh.rotateX(Math.PI / 2)
-
-            mesh.position.setFromMatrixPosition(this.jointFrameTransformation[i])
-            this.scene.add(mesh);
         }
 
-            }
-            
     }
 
     drawJointFromHome() {
@@ -241,38 +241,38 @@ export class Manipulator {
 
     drawManipulatorLink() {
         for (let i = 1; i < this.framesTransformation.length - 1; i++) {
-            if(this.isDrawLink[i-1]) {
+            if (this.isDrawLink[i - 1]) {
                 let start, end;
 
-            let invFrameTransformation = this.framesTransformation[i].clone()
-            invFrameTransformation.invert();
+                let invFrameTransformation = this.framesTransformation[i].clone()
+                invFrameTransformation.invert();
 
-            start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
-            if (i < this.framesTransformation.length - 2) {
-                end = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i + 1]);
+                start = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i]);
+                if (i < this.framesTransformation.length - 2) {
+                    end = new THREE.Vector3().setFromMatrixPosition(this.jointFrameTransformation[i + 1]);
+                }
+                else {
+                    end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
+                }
+
+
+                let vec_i_pov = end.applyMatrix4(invFrameTransformation);
+
+                // Link X Direction
+                let vX = new THREE.Vector3(vec_i_pov.x, 0, 0).applyMatrix4(this.framesTransformation[i]);
+                let cylinderX = this.cylinderMesh(start, vX);
+                this.scene.add(cylinderX);
+                // Link Y Direction
+                let vY = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, 0).applyMatrix4(this.framesTransformation[i]);
+                let cylinderY = this.cylinderMesh(vX, vY);
+                this.scene.add(cylinderY);
+                // Link Z Direction
+                let vZ = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, vec_i_pov.z).applyMatrix4(this.framesTransformation[i]);
+                let cylinderZ = this.cylinderMesh(vY, vZ);
+                this.scene.add(cylinderZ);
             }
-            else {
-                end = new THREE.Vector3().setFromMatrixPosition(this.framesTransformation[i + 1]);
-            }
-
-
-            let vec_i_pov = end.applyMatrix4(invFrameTransformation);
-
-            // Link X Direction
-            let vX = new THREE.Vector3(vec_i_pov.x, 0, 0).applyMatrix4(this.framesTransformation[i]);
-            let cylinderX = this.cylinderMesh(start, vX);
-            this.scene.add(cylinderX);
-            // Link Y Direction
-            let vY = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, 0).applyMatrix4(this.framesTransformation[i]);
-            let cylinderY = this.cylinderMesh(vX, vY);
-            this.scene.add(cylinderY);
-            // Link Z Direction
-            let vZ = new THREE.Vector3(vec_i_pov.x, vec_i_pov.y, vec_i_pov.z).applyMatrix4(this.framesTransformation[i]);
-            let cylinderZ = this.cylinderMesh(vY, vZ);
-            this.scene.add(cylinderZ);
         }
-            }
-            
+
     }
 
     drawGripper() {
@@ -357,6 +357,16 @@ export class Manipulator {
                 this.draw();
             })
         });
+    }
+
+    // onUpdateParam
+    onUpdateParam(DHparams: number[][]) {
+        this.DHparams = DHparams;
+        this.scene.remove.apply(this.scene, this.scene.children);
+        this.framesTransformation = [new THREE.Matrix4()];
+        this.jointFrameTransformation = [...this.framesTransformation];
+        this.calcAllTransformations();
+        this.draw();
     }
 
 }
