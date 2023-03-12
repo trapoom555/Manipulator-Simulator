@@ -14,7 +14,8 @@ let DHparam = [
 let rho = [true, false, true]
 
 // column major matrix
-let HneMatrix = [1, 0, 0, 0,
+let HneMatrix = [
+    1, 0, 0, 0,
     0, 1, 0, 0,
     0, 0, 1, 0,
     1, 0, 0, 1
@@ -50,6 +51,22 @@ function getRhoParamFromTableUI() {
     }
 
     return rho
+}
+
+function getHneParamFromTableUI() {
+
+    let HneMatrix = Array<number>(16).fill(0);
+    HneMatrix[15] = 1;
+
+    for (let i = 0; i < 16; i++) {
+        if ((i+1) % 4 != 0) {
+            let id = "Hne" + i.toString();
+            console.log(id)
+            let input = document.getElementById(id) as HTMLInputElement;
+            HneMatrix[i] = Number(input.value);
+        }
+    }
+    return HneMatrix
 }
 
 function addTableRow(tableData?: number[][], isRevoluteData?: boolean[]) {
@@ -115,7 +132,10 @@ if (spawnRobotBtn) {
     spawnRobotBtn.addEventListener("click", function () {
         DHparam = getDHParamFromTableUI();
         rho = getRhoParamFromTableUI();
-        m.onUpdateParam(DHparam, rho)
+        HneMatrix = getHneParamFromTableUI();
+        console.log(HneMatrix)
+        let Hne = new THREE.Matrix4().fromArray(HneMatrix)
+        m.onUpdateParam(DHparam, rho, Hne)
     });
 }
 
@@ -125,8 +145,6 @@ for (let i = 0; i < DHparam.length; i++) {
     addTableRow(DHparam, rho);
 }
 
-
-let Hne = new THREE.Matrix4().fromArray(HneMatrix)
 // Scene
 const scene = new THREE.Scene()
 
@@ -161,6 +179,7 @@ function render() {
     renderer.render(scene, camera)
 }
 
+let Hne = new THREE.Matrix4().fromArray(HneMatrix)
 let m = new Manipulator(DHparam, rho, Hne, scene)
 m.draw()
 m.addGUI()

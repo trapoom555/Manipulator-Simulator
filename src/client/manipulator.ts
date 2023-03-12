@@ -373,11 +373,12 @@ export class Manipulator {
     }
 
     // onUpdateParam
-    onUpdateParam(DHparams: number[][], rho: boolean[]) {
+    onUpdateParam(DHparams: number[][], rho: boolean[], Hne: THREE.Matrix4) {
         this.DHparams = DHparams;
         this.rho = rho;
         this.q = Array<number>(this.rho.length).fill(0);
         this.framesTransformation = [new THREE.Matrix4()]; // Base Frame
+        this.Hne = Hne;
         this.jointFrameTransformation = [...this.framesTransformation]
         this.calcAllTransformations()
         
