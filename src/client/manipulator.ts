@@ -360,8 +360,9 @@ export class Manipulator {
     }
 
     // onUpdateParam
-    onUpdateParam(DHparams: number[][]) {
+    onUpdateParam(DHparams: number[][], rho: boolean[]) {
         this.DHparams = DHparams;
+        this.rho = rho;
         this.scene.remove.apply(this.scene, this.scene.children);
         this.framesTransformation = [new THREE.Matrix4()];
         this.jointFrameTransformation = [...this.framesTransformation];
