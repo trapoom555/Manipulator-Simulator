@@ -319,6 +319,8 @@ export class Manipulator {
             this.draw();
         })
 
+        configVarFolder.open()
+
     }
 
     configVarGUI(folder: GUI) {
