@@ -154,11 +154,21 @@ const camera = new THREE.PerspectiveCamera(
     0.01,
     100
 )
-camera.position.z = 2
+
 const renderer = new THREE.WebGLRenderer()
-const controls = new OrbitControls(camera, renderer.domElement)
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
+
+const controls = new OrbitControls(camera, renderer.domElement)
+
+// Set the initial position that the camera is looking at
+controls.target.set(1.5, 0, 1)
+controls.enableDamping = true
+controls.dampingFactor = 0.1
+
+// Set the initial distance between the camera and the target
+camera.position.set(1.5, -3, 3)
+camera.lookAt(controls.target)
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
@@ -172,6 +182,7 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate)
     createFloor(scene, 8)
+    controls.update()
     render()
 }
 
