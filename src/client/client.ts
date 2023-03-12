@@ -73,23 +73,40 @@ function addTableRow(tableData?: number[][], isRevoluteData?: boolean[]) {
     row = rhoTable.insertRow(-1);
     let cell = row.insertCell(0);
     if (isRevoluteData != null) {
-        if(isRevoluteData[lastRowIdx]) {
-            cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() +"' checked> </input>";
+        if (isRevoluteData[lastRowIdx]) {
+            cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() + "' checked> </input>";
         }
         else {
-            cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() +"'> </input>";
+            cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() + "'> </input>";
         }
     }
     else {
-        cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() +"' checked> </input>";
+        cell.innerHTML = "<input type='checkbox' id='rho" + lastRowIdx.toString() + "' checked> </input>";
     }
-    
+
 }
+
+function deleteTableRow() {
+    // add DH Table Row
+    let DHtable = document.getElementById("dh") as HTMLTableElement;
+    DHtable.deleteRow(DHtable.rows.length - 1);
+    // add rho Table Row
+    let rhoTable = document.getElementById("rho") as HTMLTableElement;
+    rhoTable.deleteRow(rhoTable.rows.length - 1);
+}
+
 
 let addRowBtn = document.getElementById("add-row-btn") as HTMLButtonElement;
 if (addRowBtn) {
     addRowBtn.addEventListener("click", function () {
         addTableRow();
+    });
+}
+
+let deleteRowBtn = document.getElementById("del-row-btn") as HTMLButtonElement;
+if (deleteRowBtn) {
+    deleteRowBtn.addEventListener("click", function () {
+        deleteTableRow();
     });
 }
 
