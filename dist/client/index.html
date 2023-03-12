@@ -12,8 +12,12 @@
         }
 
         .table-des {
-            top: 10px;
-            left: 10px;
+            margin-top: 20px;
+            width: fit-content;
+            color: white;
+        }
+
+        .table-des-guide {
             width: fit-content;
             color: white;
         }
@@ -36,6 +40,37 @@
             border: none;
         }
 
+        #creator-layer {
+            position: absolute;
+            z-index: 100;
+            width: fit-content;
+            bottom: 1%;
+            right: 1%;
+            color: white;
+        }
+
+        #creator-wrapper {
+            display: flex;
+            flex-direction: row;
+            width: fit-content;
+            background-color: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        #github {
+            text-decoration: none;
+            color: black;
+        }
+
+        #github-img {
+            margin-right: 5px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
         table,
         th,
         td {
@@ -55,32 +90,56 @@
             color: white;
             border: none;
             text-align: center;
-            width: 50px;
+            width: 60px;
             font-family: inherit;
             font-size: inherit;
         }
 
         .row-btn {
             display: block;
-            background-color: transparent;
+            background-color: white;
             font-size: inherit;
             font-family: inherit;
             border: solid white 1px;
-            color: white;
+            color: black;
             top: 10px;
             left: 100px;
+            width: 136px;
+            margin-top: 20px;
             cursor: pointer;
+        }
+
+        .row-btn:hover {
+            color: white;
+            background-color: black;
+            transition: 0.3s;
         }
 
         #ui-layer {
             position: absolute;
             z-index: 100;
             width: fit-content;
+            margin-top: 20px;
+            margin-left: 20px;
         }
 
         #table-wrapper {
             display: flex;
             flex-direction: row;
+        }
+
+        .add-del-btn-wrapper {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #add-row-btn {
+            margin-right: 20px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -88,6 +147,7 @@
 <body>
     <script type="module" src="bundle.js"></script>
     <div id="ui-layer">
+        <h1>Manipulator Simulator</h1>
         <div id="table-wrapper">
             <div>
                 <div class="table-des">DH-Table</div>
@@ -109,12 +169,13 @@
                 </table>
             </div>
         </div>
-        <div>
+        <div class="add-del-btn-wrapper">
             <button id="add-row-btn" class="row-btn">Add Row</button>
             <button id="del-row-btn" class="row-btn">Delete Row</button>
         </div>
-        
+
         <div class="table-des">Hne</div>
+        <div class="table-des-guide">(Transformation Matrix to End-Effector)</div>
         <table id="hne">
             <tr>
                 <td><input id="Hne0" value="1"></td>
@@ -141,7 +202,15 @@
                 <td>1</td>
             </tr>
         </table>
-        <button id="spawn-robot">Spawn Robot</button>
+        <button id="spawn-robot" class="row-btn">Spawn Robot</button>
+    </div>
+    <div id="creator-layer">
+        <a href="https://github.com/trapoom555">
+            <div id="creator-wrapper">
+                <img src="assets/github-logo.png" width="20" height="20" id="github-img">
+                <div id="github">Github</div>
+            </div>
+        </a>
     </div>
 </body>
 
