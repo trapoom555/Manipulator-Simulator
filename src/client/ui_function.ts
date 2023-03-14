@@ -85,12 +85,16 @@ class UIFunction {
     }
 
     deleteTableRow() {
-        // add DH Table Row
+        // delete DH Table Row
         let DHtable = document.getElementById("dh") as HTMLTableElement;
-        DHtable.deleteRow(DHtable.rows.length - 1);
-        // add rho Table Row
+        if (DHtable.rows.length > 2) {
+            DHtable.deleteRow(DHtable.rows.length - 1);
+        }
+        // delete rho Table Row
         let rhoTable = document.getElementById("rho") as HTMLTableElement;
-        rhoTable.deleteRow(rhoTable.rows.length - 1);
+        if (rhoTable.rows.length > 2) {
+            rhoTable.deleteRow(rhoTable.rows.length - 1);
+        }
     }
 }
 
