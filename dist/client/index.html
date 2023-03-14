@@ -5,143 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Manipulator Simulator</title>
-    <style>
-        body {
-            overflow: hidden;
-            margin: 0px;
-        }
-
-        .table-des {
-            margin-top: 20px;
-            width: fit-content;
-            color: white;
-        }
-
-        .table-des-guide {
-            width: fit-content;
-            color: white;
-        }
-
-        #dh {
-            top: 40px;
-            left: 10px;
-            width: fit-content;
-            text-align: center;
-            display: block;
-            color: white;
-            border: none;
-            margin-right: 20px;
-        }
-
-        #rho {
-            text-align: center;
-            display: block;
-            color: white;
-            border: none;
-        }
-
-        #creator-layer {
-            position: absolute;
-            z-index: 100;
-            width: fit-content;
-            bottom: 1%;
-            right: 1%;
-            color: white;
-        }
-
-        #creator-wrapper {
-            display: flex;
-            flex-direction: row;
-            width: fit-content;
-            background-color: white;
-            padding: 2px 5px;
-            border-radius: 4px;
-        }
-
-        #github {
-            text-decoration: none;
-            color: black;
-        }
-
-        #github-img {
-            margin-right: 5px;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid white;
-            border-collapse: collapse;
-            color: white;
-            text-align: center;
-        }
-
-        th {
-            width: 70px;
-            height: 25px;
-        }
-
-        input {
-            background-color: transparent;
-            color: white;
-            border: none;
-            text-align: center;
-            width: 60px;
-            font-family: inherit;
-            font-size: inherit;
-        }
-
-        .row-btn {
-            display: block;
-            background-color: white;
-            font-size: inherit;
-            font-family: inherit;
-            border: solid white 1px;
-            color: black;
-            top: 10px;
-            left: 100px;
-            width: 136px;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        .row-btn:hover {
-            color: white;
-            background-color: black;
-            transition: 0.3s;
-        }
-
-        #ui-layer {
-            position: absolute;
-            z-index: 100;
-            width: fit-content;
-            margin-top: 20px;
-            margin-left: 20px;
-        }
-
-        #table-wrapper {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .add-del-btn-wrapper {
-            display: flex;
-            flex-direction: row;
-        }
-
-        #add-row-btn {
-            margin-right: 20px;
-        }
-
-        h1 {
-            color: white;
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
@@ -205,7 +69,7 @@
         <button id="spawn-robot" class="row-btn">Spawn Robot</button>
     </div>
     <div id="creator-layer">
-        <a href="https://github.com/trapoom555">
+        <a href="https://github.com/trapoom555/Manipulator-Simulator">
             <div id="creator-wrapper">
                 <img src="assets/github-logo.png" width="20" height="20" id="github-img">
                 <div id="github">Github</div>
