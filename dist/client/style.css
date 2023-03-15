@@ -72,7 +72,8 @@ td {
     text-align: center;
 }
 
-th {
+th,
+tr {
     width: 70px;
     height: 25px;
 }
@@ -132,4 +133,26 @@ input {
 h1 {
     color: white;
     margin-bottom: 10px;
+}
+
+#too-small-screen-size {
+    display: none;
+}
+
+@media screen and ((max-width: 800px) or (max-height: 500px)) {
+    #ui-layer {
+        display: none;
+    }
+
+    #too-small-screen-size {
+        position: absolute;
+        z-index: 100;
+        width: fit-content;
+        margin-top: 20px;
+        margin-left: 20px;
+        color: white;
+        display: block;
+        bottom: 1%;
+    }
+
 }
