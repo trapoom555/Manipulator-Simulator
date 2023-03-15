@@ -130,5 +130,12 @@ export class SetUIFunction {
         for (let i = 0; i < initDHparam.length; i++) {
             uiFunction.addTableRow(initDHparam, initRho);
         }
+
+        let infoBtn = document.getElementById("info-img") as HTMLImageElement;
+        if (infoBtn) {
+            infoBtn.addEventListener("click", function () {
+                alert('You can modify the robot by editting values in tables and click "Spawn Robot" button');
+            });
+        }
     }
 }

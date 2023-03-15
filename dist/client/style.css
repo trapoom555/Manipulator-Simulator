@@ -139,6 +139,19 @@ h1 {
     display: none;
 }
 
+#topic-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+#info-img {
+    margin-top: 35px;
+    width: 17px;
+    height: 17px;
+    margin-left: 7px;
+    cursor: pointer;
+}
+
 @media screen and ((max-width: 800px) or (max-height: 500px)) {
     #ui-layer {
         display: none;
