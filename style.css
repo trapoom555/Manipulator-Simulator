@@ -152,7 +152,7 @@ h1 {
     cursor: pointer;
 }
 
-@media screen and ((max-device-width: 800px) or (max-device-height: 500px)), screen and ((max-width: 800px) or (max-height: 500px)) {
+@media screen and ((max-device-width: 800px) or (max-device-height: 500px)) {
     #ui-layer {
         display: none;
     }
