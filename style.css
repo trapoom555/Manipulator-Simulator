@@ -169,3 +169,20 @@ h1 {
     }
 
 }
+
+@supports (-webkit-touch-callout: none) {
+    #ui-layer {
+        display: none;
+    }
+
+    #too-small-screen-size {
+        position: absolute;
+        z-index: 100;
+        width: fit-content;
+        margin-top: 20px;
+        margin-left: 20px;
+        color: white;
+        display: block;
+        bottom: 1%;
+    }
+  }
